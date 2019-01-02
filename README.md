@@ -2,17 +2,17 @@
 auto install Python3 and pip3  
 support **CentOS 6+/Debian 8+/Ubuntu 14+**
 
-# Install without compile(recommend)
+## Install without compile(recommend)
 ```
 source <(curl -sL https://git.io/fhqMz)
 ```
 
-# Install with compile(latest version)
+## Install with compile(latest version)
 ```
 source <(curl -sL https://git.io/fhqMz) --latest
 ```
 
-# Install with compile(special version)
+## Install with compile(special version)
 ```
 source <(curl -sL https://git.io/fhqMz) -v 3.6.5
 ```
