@@ -1,5 +1,6 @@
 #!/bin/bash
 # Author: Jrohy
+# Github: https://github.com/Jrohy/python3-install
 
 INSTALL_VERSION=""
 
@@ -29,9 +30,6 @@ while [[ $# > 0 ]];do
         --latest)
         LATEST=1
         ;;
-        -h|--help)
-        HELP=1
-        ;;
         -v|--version)
         INSTALL_VERSION="$2"
         echo -e "prepare install python $(colorEcho ${BLUE} $INSTALL_VERSION)..\n"
@@ -46,10 +44,10 @@ done
 #############################
 
 checkSys() {
-    #检查是否为Root
+    # check root user
     [ $(id -u) != "0" ] && { colorEcho ${RED} "Error: You must be root to run this script"; exit 1; }
 
-    #检查系统信息
+    # check os
     if [[ -e /etc/redhat-release ]];then
         if [[ $(cat /etc/redhat-release | grep Fedora) ]];then
             OS='Fedora'
@@ -72,7 +70,7 @@ checkSys() {
 
 commonDependent(){
     ${PACKAGE_MANAGER} update -y
-    ${PACKAGE_MANAGER} install curl wget -y
+    ${PACKAGE_MANAGER} install wget -y
 }
 
 compileDependent(){
@@ -140,7 +138,6 @@ webInstall(){
             ln -s /bin/python3.6 /bin/python3
         fi
     else
-        ${PACKAGE_MANAGER} update
         [[ -z $(dpkg -l|grep python3) ]] && ${PACKAGE_MANAGER} install python3 -y
         ${PACKAGE_MANAGER} install python3-distutils -y >/dev/null 2>&1
     fi
