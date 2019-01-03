@@ -132,13 +132,15 @@ compileInstall(){
 webInstall(){
     if [[ ${OS} == 'CentOS' || ${OS} == 'Fedora' ]];then
         [[ ${OS} == 'CentOS' ]] && ${PACKAGE_MANAGER} install epel-release -y
-        if [[ -z $(rpm -qa|grep python3) ]];then
+        if ! type python3 >/dev/null 2>&1;then
             ${PACKAGE_MANAGER} install https://centos7.iuscommunity.org/ius-release.rpm -y
             ${PACKAGE_MANAGER} install python36u -y
             ln -s /bin/python3.6 /bin/python3
         fi
     else
-        [[ -z $(dpkg -l|grep python3) ]] && ${PACKAGE_MANAGER} install python3 -y
+        if ! type python3 >/dev/null 2>&1;then
+            ${PACKAGE_MANAGER} install python3 -y
+        fi
         ${PACKAGE_MANAGER} install python3-distutils -y >/dev/null 2>&1
     fi
 }
