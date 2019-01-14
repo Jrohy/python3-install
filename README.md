@@ -1,4 +1,5 @@
 # python3-install
+![](https://img.shields.io/github/stars/Jrohy/python3-install.svg)   ![](https://img.shields.io/github/forks/Jrohy/python3-install.svg) ![](https://img.shields.io/github/license/Jrohy/python3-install.svg)
 auto install Python3 and pip3  
 support **CentOS 6+/Debian 8+/Ubuntu 14+**
 
