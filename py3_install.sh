@@ -12,6 +12,9 @@ LATEST=0
 
 ORIGIN_PATH=$(pwd)
 
+# cancel centos alias
+[[ -f /etc/redhat-release ]] && unalias -a
+
 #######color code########
 RED="31m"      # Error message
 GREEN="32m"    # Success message
@@ -106,6 +109,8 @@ updateOpenSSL(){
     ln -s /usr/local/openssl/include/openssl /usr/include/openssl
     echo "/usr/local/openssl/lib">>/etc/ld.so.conf
     ldconfig
+
+    cd $ORIGIN_PATH && rm -rf openssl-$VERSION*
 }
 
 # compile install python3
@@ -126,6 +131,8 @@ compileInstall(){
         ./configure --with-openssl=/usr/local/openssl
         make && make install
     fi
+
+    cd $ORIGIN_PATH && rm -rf Python-$INSTALL_VERSION*
 }
 
 #online install python3
