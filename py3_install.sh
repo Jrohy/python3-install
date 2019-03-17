@@ -34,6 +34,7 @@ while [[ $# > 0 ]];do
     case $KEY in
         --nopip)
         NO_PIP=1
+        colorEcho $BLUE "only install python3..\n"
         ;;
         --latest)
         LATEST=1
