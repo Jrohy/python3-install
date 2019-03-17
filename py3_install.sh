@@ -10,6 +10,8 @@ OPENSSL_VERSION="1.1.1b"
 
 LATEST=0
 
+NO_PIP=0
+
 ORIGIN_PATH=$(pwd)
 
 # cancel centos alias
@@ -28,8 +30,11 @@ colorEcho(){
 
 #######get params#########
 while [[ $# > 0 ]];do
-    key="$1"
-    case $key in
+    KEY="$1"
+    case $KEY in
+        --nopip)
+        NO_PIP=1
+        ;;
         --latest)
         LATEST=1
         ;;
@@ -163,7 +168,7 @@ main(){
         webInstall
     fi
     # install latest pip
-    python3 <(curl -sL https://bootstrap.pypa.io/get-pip.py)
+    [[ $NO_PIP == 0 ]] && python3 <(curl -sL https://bootstrap.pypa.io/get-pip.py)
 }
 
 main
