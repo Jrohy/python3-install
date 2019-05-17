@@ -96,7 +96,10 @@ downloadPackage(){
     cd $ORIGIN_PATH
     [[ $LATEST == 1 ]] && INSTALL_VERSION=$LASTEST_VERSION
     wget https://www.python.org/ftp/python/$INSTALL_VERSION/Python-$INSTALL_VERSION.tgz
-    [[ $? != 0 ]] && colorEcho ${RED} "Fail download Python-$INSTALL_VERSION.tgz version python!" && exit 1
+    if [[ $? != 0 ]];then
+        colorEcho ${RED} "Fail download Python-$INSTALL_VERSION.tgz version python!"
+        exit 1
+    fi
     tar xzvf Python-$INSTALL_VERSION.tgz
     cd Python-$INSTALL_VERSION
 }
