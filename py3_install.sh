@@ -4,8 +4,6 @@
 
 INSTALL_VERSION=""
 
-LASTEST_VERSION="3.7.3"
-
 OPENSSL_VERSION="1.1.1b"
 
 LATEST=0
@@ -97,7 +95,7 @@ compileDependent(){
 
 downloadPackage(){
     cd $ORIGIN_PATH
-    [[ $LATEST == 1 ]] && INSTALL_VERSION=$LASTEST_VERSION
+    [[ $LATEST == 1 ]] && INSTALL_VERSION=`curl -s https://www.python.org/|grep "downloads/release/"|egrep -o "Python [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]"|sed s/"Python "//g`
     wget https://www.python.org/ftp/python/$INSTALL_VERSION/Python-$INSTALL_VERSION.tgz
     if [[ $? != 0 ]];then
         colorEcho ${RED} "Fail download Python-$INSTALL_VERSION.tgz version python!"
