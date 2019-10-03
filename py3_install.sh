@@ -59,6 +59,9 @@ checkSys() {
         if [[ $(cat /etc/redhat-release | grep Fedora) ]];then
             OS='Fedora'
             PACKAGE_MANAGER='dnf'
+        elif [[ $(cat /etc/redhat-release |grep "CentOS Linux release 8") ]];then
+            OS='CentOS8'
+            PACKAGE_MANAGER='dnf'
         else
             OS='CentOS'
             PACKAGE_MANAGER='yum'
@@ -84,7 +87,7 @@ commonDependent(){
 }
 
 compileDependent(){
-    if [[ ${OS} == 'CentOS' || ${OS} == 'Fedora' ]];then
+    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
         ${PACKAGE_MANAGER} groupinstall -y "Development tools"
         ${PACKAGE_MANAGER} install -y tk-devel xz-devel gdbm-devel sqlite-devel bzip2-devel readline-devel zlib-devel openssl-devel libffi-devel
     else
@@ -147,12 +150,16 @@ compileInstall(){
 
 #online install python3
 webInstall(){
-    if [[ ${OS} == 'CentOS' || ${OS} == 'Fedora' ]];then
-        [[ ${OS} == 'CentOS' ]] && ${PACKAGE_MANAGER} install epel-release -y
+    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
         if ! type python3 >/dev/null 2>&1;then
-            ${PACKAGE_MANAGER} install https://centos7.iuscommunity.org/ius-release.rpm -y
-            ${PACKAGE_MANAGER} install python36u -y
-            ln -s /bin/python3.6 /bin/python3
+            if [[ ${OS} == 'CentOS' ]];then
+                ${PACKAGE_MANAGER} install epel-release -y
+                ${PACKAGE_MANAGER} install https://centos7.iuscommunity.org/ius-release.rpm -y
+                ${PACKAGE_MANAGER} install python36u -y
+                ln -s /bin/python3.6 /bin/python3
+            elif [[ ${OS} == 'CentOS8' ]];then
+                ${PACKAGE_MANAGER} install python3 -y
+            fi
         fi
     else
         if ! type python3 >/dev/null 2>&1;then
