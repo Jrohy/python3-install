@@ -16,10 +16,11 @@ ORIGIN_PATH=$(pwd)
 [[ -f /etc/redhat-release ]] && unalias -a
 
 #######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+RED="31m"
+GREEN="32m"
+YELLOW="33m"
+BLUE="36m"
+FUCHSIA="35m"
 
 colorEcho(){
     COLOR=$1
@@ -82,12 +83,12 @@ checkSys() {
 }
 
 commonDependent(){
-    ${PACKAGE_MANAGER} update -y
+    [[ $PACKAGE_MANAGER == 'apt-get' ]] && ${PACKAGE_MANAGER} update -y
     ${PACKAGE_MANAGER} install wget -y
 }
 
 compileDependent(){
-    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
+    if [[ ${OS} =~ 'CentOS' || ${OS} == 'Fedora' ]];then
         ${PACKAGE_MANAGER} groupinstall -y "Development tools"
         ${PACKAGE_MANAGER} install -y tk-devel xz-devel gdbm-devel sqlite-devel bzip2-devel readline-devel zlib-devel openssl-devel libffi-devel
     else
@@ -150,7 +151,7 @@ compileInstall(){
 
 #online install python3
 webInstall(){
-    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
+    if [[ ${OS} =~ 'CentOS' || ${OS} == 'Fedora' ]];then
         if ! type python3 >/dev/null 2>&1;then
             if [[ ${OS} == 'CentOS' ]];then
                 ${PACKAGE_MANAGER} install epel-release -y
