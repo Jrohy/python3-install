@@ -157,7 +157,7 @@ webInstall(){
                 ${PACKAGE_MANAGER} install epel-release -y
                 ${PACKAGE_MANAGER} install https://centos7.iuscommunity.org/ius-release.rpm -y
                 ${PACKAGE_MANAGER} install python36u -y
-                ln -s /bin/python3.6 /bin/python3
+                [[ ! -e /bin/python3 ]] && ln -s /bin/python3.6 /bin/python3
             elif [[ ${OS} == 'CentOS8' ]];then
                 ${PACKAGE_MANAGER} install python3 -y
             fi
