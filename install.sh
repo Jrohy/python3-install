@@ -86,14 +86,22 @@ downloadPackage(){
     cd $ORIGIN_PATH
     [[ $LATEST == 1 ]] && INSTALL_VERSION=`curl -s https://www.python.org/|grep "downloads/release/"|egrep -o "Python [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]"|sed s/"Python "//g`
     PYTHON_PACKAGE="Python-$INSTALL_VERSION.tgz"
-    if [[ ! -e $PYTHON_PACKAGE ]];then
-        wget https://www.python.org/ftp/python/$INSTALL_VERSION/$PYTHON_PACKAGE
-        if [[ $? != 0 ]];then
-            colorEcho ${RED} "Fail download $PYTHON_PACKAGE version python!"
-            exit 1
+    while :
+    do
+        if [[ ! -e $PYTHON_PACKAGE ]];then
+            wget https://www.python.org/ftp/python/$INSTALL_VERSION/$PYTHON_PACKAGE
+            if [[ $? != 0 ]];then
+                colorEcho ${RED} "Fail download $PYTHON_PACKAGE version python!"
+                exit 1
+            fi
         fi
-    fi
-    tar xzvf $PYTHON_PACKAGE
+        tar xzvf $PYTHON_PACKAGE
+        if [[ $? == 0 ]];then
+            break
+        else
+            rm -rf $PYTHON_PACKAGE Python-$INSTALL_VERSION
+        fi
+    done
     cd Python-$INSTALL_VERSION
 }
 
