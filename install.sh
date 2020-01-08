@@ -85,12 +85,15 @@ compileDependent(){
 downloadPackage(){
     cd $ORIGIN_PATH
     [[ $LATEST == 1 ]] && INSTALL_VERSION=`curl -s https://www.python.org/|grep "downloads/release/"|egrep -o "Python [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]"|sed s/"Python "//g`
-    wget https://www.python.org/ftp/python/$INSTALL_VERSION/Python-$INSTALL_VERSION.tgz
-    if [[ $? != 0 ]];then
-        colorEcho ${RED} "Fail download Python-$INSTALL_VERSION.tgz version python!"
-        exit 1
+    PYTHON_PACKAGE="Python-$INSTALL_VERSION.tgz"
+    if [[ ! -e $PYTHON_PACKAGE ]];then
+        wget https://www.python.org/ftp/python/$INSTALL_VERSION/$PYTHON_PACKAGE
+        if [[ $? != 0 ]];then
+            colorEcho ${RED} "Fail download $PYTHON_PACKAGE version python!"
+            exit 1
+        fi
     fi
-    tar xzvf Python-$INSTALL_VERSION.tgz
+    tar xzvf $PYTHON_PACKAGE
     cd Python-$INSTALL_VERSION
 }
 
