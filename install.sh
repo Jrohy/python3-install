@@ -55,29 +55,14 @@ checkSys() {
     # check root user
     [ $(id -u) != "0" ] && { colorEcho ${RED} "Error: You must be root to run this script"; exit 1; }
 
-    # check os
-    if [[ -e /etc/redhat-release ]];then
-        if [[ $(cat /etc/redhat-release | grep Fedora) ]];then
-            OS='Fedora'
-            PACKAGE_MANAGER='dnf'
-        elif [[ $(cat /etc/redhat-release |grep "CentOS Linux release 8") ]];then
-            OS='CentOS8'
-            PACKAGE_MANAGER='dnf'
-        else
-            OS='CentOS'
-            PACKAGE_MANAGER='yum'
-        fi
-    elif [[ $(cat /etc/issue | grep Debian) ]];then
-        OS='Debian'
+    if [[ `command -v apt-get` ]];then
         PACKAGE_MANAGER='apt-get'
-    elif [[ $(cat /etc/issue | grep Ubuntu) ]];then
-        OS='Ubuntu'
-        PACKAGE_MANAGER='apt-get'
-    elif [[ $(cat /etc/issue | grep Raspbian) ]];then
-        OS='Raspbian'
-        PACKAGE_MANAGER='apt-get'
+    elif [[ `command -v dnf` ]];then
+        PACKAGE_MANAGER='dnf'
+    elif [[ `command -v yum` ]];then
+        PACKAGE_MANAGER='yum'
     else
-        colorEcho ${RED} "Not support OS, Please reinstall OS and retry!"
+        colorEcho $RED "Not support OS!"
         exit 1
     fi
 }
@@ -88,7 +73,7 @@ commonDependent(){
 }
 
 compileDependent(){
-    if [[ ${OS} =~ 'CentOS' || ${OS} == 'Fedora' ]];then
+    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
         ${PACKAGE_MANAGER} groupinstall -y "Development tools"
         ${PACKAGE_MANAGER} install -y tk-devel xz-devel gdbm-devel sqlite-devel bzip2-devel readline-devel zlib-devel openssl-devel libffi-devel
     else
@@ -151,14 +136,14 @@ compileInstall(){
 
 #online install python3
 webInstall(){
-    if [[ ${OS} =~ 'CentOS' || ${OS} == 'Fedora' ]];then
+    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
         if ! type python3 >/dev/null 2>&1;then
-            if [[ ${OS} == 'CentOS' ]];then
+            if [[ ${PACKAGE_MANAGER} == 'yum' ]];then
                 ${PACKAGE_MANAGER} install epel-release -y
                 ${PACKAGE_MANAGER} install https://centos7.iuscommunity.org/ius-release.rpm -y
                 ${PACKAGE_MANAGER} install python36u -y
                 [[ ! -e /bin/python3 ]] && ln -s /bin/python3.6 /bin/python3
-            elif [[ ${OS} == 'CentOS8' ]];then
+            elif [[ ${PACKAGE_MANAGER} == 'dnf' ]];then
                 ${PACKAGE_MANAGER} install python3 -y
             fi
         fi
