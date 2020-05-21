@@ -151,7 +151,7 @@ webInstall(){
         if ! type python3 >/dev/null 2>&1;then
             if [[ ${PACKAGE_MANAGER} == 'yum' ]];then
                 ${PACKAGE_MANAGER} install epel-release -y
-                ${PACKAGE_MANAGER} install https://centos7.iuscommunity.org/ius-release.rpm -y
+                ${PACKAGE_MANAGER} install https://repo.ius.io/ius-release-el7.rpm -y
                 ${PACKAGE_MANAGER} install python36u -y
                 [[ ! -e /bin/python3 ]] && ln -s /bin/python3.6 /bin/python3
             elif [[ ${PACKAGE_MANAGER} == 'dnf' ]];then
