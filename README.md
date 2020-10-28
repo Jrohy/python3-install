@@ -5,22 +5,22 @@ support **CentOS 6+/Debian 8+/Ubuntu 14+**
 
 ## Install without compile(recommend)
 ```
-bash <(curl -sL https://python3.netlify.app/install.sh)
+source <(curl -sL https://python3.netlify.app/install.sh)
 ```
 
 ## Install with compile(latest version)
 ```
-bash <(curl -sL https://python3.netlify.app/install.sh) --latest
+source <(curl -sL https://python3.netlify.app/install.sh) --latest
 ```
 
 ## Install with compile(special version)
 ```
-bash <(curl -sL https://python3.netlify.app/install.sh) -v 3.6.5
+source <(curl -sL https://python3.netlify.app/install.sh) -v 3.6.5
 ```
 
 ## Only install python3
 ```
-bash <(curl -sL https://python3.netlify.app/install.sh) --nopip
+source <(curl -sL https://python3.netlify.app/install.sh) --nopip
 ```
 
 find the special version in [python_version_list](https://www.python.org/ftp/python/), script will auto download and compile it   
