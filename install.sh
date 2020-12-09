@@ -169,6 +169,21 @@ webInstall(){
     fi
 }
 
+pipInstall(){
+    [[ $NO_PIP == 1 ]] && return
+    PY3_VERSION=`python3 -V|tr -cd '[0-9.]'|cut -d. -f2`
+    if [ $PY3_VERSION -gt 4 ];then
+        python3 <(curl -sL https://bootstrap.pypa.io/get-pip.py)
+    else
+        if [[ -z `command -v pip` ]];then
+            if [[ ${PACKAGE_MANAGER} == 'apt-get' ]];then
+                apt-get install -y python3-pip
+            fi
+            [[ -z `command -v pip` && `command -v pip3` ]] && ln -s $(which pip3) /usr/bin/pip
+        fi
+    fi
+}
+
 main(){
     checkSys
 
@@ -179,8 +194,8 @@ main(){
     else
         webInstall
     fi
-    # install latest pip
-    [[ $NO_PIP == 0 ]] && python3 <(curl -sL https://bootstrap.pypa.io/get-pip.py)
+
+    pipInstall
 }
 
 main
