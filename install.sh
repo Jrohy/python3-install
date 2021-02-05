@@ -172,7 +172,7 @@ webInstall(){
 pipInstall(){
     [[ $NO_PIP == 1 ]] && return
     PY3_VERSION=`python3 -V|tr -cd '[0-9.]'|cut -d. -f2`
-    if [ $PY3_VERSION -gt 4 ];then
+    if [ $PY3_VERSION -gt 5 ];then
         python3 <(curl -sL https://bootstrap.pypa.io/get-pip.py)
     else
         if [[ -z `command -v pip` ]];then
