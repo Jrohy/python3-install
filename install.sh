@@ -4,7 +4,7 @@
 
 INSTALL_VERSION=""
 
-OPENSSL_VERSION="1.1.1j"
+OPENSSL_VERSION="1.1.1k"
 
 LATEST=0
 
@@ -141,7 +141,7 @@ compileInstall(){
         echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/openssl/lib" >> $HOME/.bashrc
         source $HOME/.bashrc
         downloadPackage
-        ./configure --with-openssl=/usr/local/openssl
+        ./configure --enable-optimizations --enable-loadable-sqlite-extensions --with-openssl=/usr/local/openssl
         make && make install
     fi
 
