@@ -10,6 +10,8 @@ LATEST=0
 
 NO_PIP=0
 
+CONFIG_PARAM=""
+
 ORIGIN_PATH=$(pwd)
 
 # cancel centos alias
@@ -44,11 +46,14 @@ while [[ $# > 0 ]];do
         shift
         ;;
         *)
-                # unknown option
+        CONFIG_PARAM=$CONFIG_PARAM" $KEY"
         ;;
     esac
     shift # past argument or value
 done
+if [[ $LATEST == 1 || $INSTALL_VERSION ]];then
+    [[ $CONFIG_PARAM ]] && echo "python3 compile command: `colorEcho $BLUE ./configure $CONFIG_PARAM`"
+fi
 #############################
 
 checkSys() {
@@ -134,14 +139,14 @@ compileInstall(){
 
     if [ $LOCAL_SSL_VERSION -gt 101 ];then
         downloadPackage
-        ./configure
+        ./configure $CONFIG_PARAM
         make && make install
     else
         updateOpenSSL $OPENSSL_VERSION
         echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/openssl/lib" >> $HOME/.bashrc
         source $HOME/.bashrc
         downloadPackage
-        ./configure --enable-optimizations --enable-loadable-sqlite-extensions --with-openssl=/usr/local/openssl
+        ./configure --with-openssl=/usr/local/openssl $CONFIG_PARAM
         make && make install
     fi
 
