@@ -137,18 +137,18 @@ compileInstall(){
 
     LOCAL_SSL_VERSION=$(openssl version|awk '{print $2}'|tr -cd '[0-9]')
 
-    if [ $LOCAL_SSL_VERSION -gt 101 ];then
-        downloadPackage
-        ./configure $CONFIG_PARAM
-        make && make install
-    else
+    if [[ $LOCAL_SSL_VERSION -le 101 ]] || ([[ $LATEST == 1 ]] && [[ $LOCAL_SSL_VERSION -lt 111 ]]);then
         updateOpenSSL $OPENSSL_VERSION
         echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/openssl/lib" >> $HOME/.bashrc
         source $HOME/.bashrc
         downloadPackage
         ./configure --with-openssl=/usr/local/openssl $CONFIG_PARAM
         make && make install
-    fi
+    else
+        downloadPackage
+        ./configure $CONFIG_PARAM
+        make && make install
+    else
 
     cd $ORIGIN_PATH && rm -rf Python-$INSTALL_VERSION*
 }
