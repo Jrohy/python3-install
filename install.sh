@@ -148,7 +148,7 @@ compileInstall(){
         downloadPackage
         ./configure $CONFIG_PARAM
         make && make install
-    else
+    fi
 
     cd $ORIGIN_PATH && rm -rf Python-$INSTALL_VERSION*
 }
