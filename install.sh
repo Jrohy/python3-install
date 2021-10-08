@@ -116,7 +116,7 @@ downloadPackage(){
 updateOpenSSL(){
     cd $ORIGIN_PATH
     local VERSION=$1
-    wget https://www.openssl.org/source/openssl-$VERSION.tar.gz
+    wget --no-check-certificate https://www.openssl.org/source/openssl-$VERSION.tar.gz
     tar xzvf openssl-$VERSION.tar.gz
     cd openssl-$VERSION
     ./config --prefix=/usr/local/openssl shared zlib
