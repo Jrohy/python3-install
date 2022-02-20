@@ -177,8 +177,10 @@ webInstall(){
 pipInstall(){
     [[ $NO_PIP == 1 ]] && return
     PY3_VERSION=`python3 -V|tr -cd '[0-9.]'|cut -d. -f2`
-    if [ $PY3_VERSION -gt 5 ];then
+    if [[ $PY3_VERSION > 6 ]];then
         python3 <(curl -sL https://bootstrap.pypa.io/get-pip.py)
+    elif [[ $PY3_VERSION == 6 ]];then
+        python3 <(curl -sL https://bootstrap.pypa.io/pip/3.6/get-pip.py)
     else
         if [[ -z `command -v pip` ]];then
             if [[ ${PACKAGE_MANAGER} == 'apt-get' ]];then
