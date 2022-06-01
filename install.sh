@@ -4,6 +4,14 @@
 
 origin_path=$(pwd)
 
+install_version=""
+
+latest=0
+
+no_pip=0
+
+config_param=""
+
 openssl_version="1.1.1o"
 
 # cancel centos alias
