@@ -2,15 +2,15 @@
 # Author: Jrohy
 # Github: https://github.com/Jrohy/python3-install
 
-origin_path=$(pwd)
-
-install_version=""
-
 latest=0
 
 no_pip=0
 
 config_param=""
+
+install_version=""
+
+origin_path=$(pwd)
 
 openssl_version="1.1.1o"
 
