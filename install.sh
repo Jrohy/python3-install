@@ -2,31 +2,22 @@
 # Author: Jrohy
 # Github: https://github.com/Jrohy/python3-install
 
-INSTALL_VERSION=""
+origin_path=$(pwd)
 
-OPENSSL_VERSION="1.1.1l"
-
-LATEST=0
-
-NO_PIP=0
-
-CONFIG_PARAM=""
-
-ORIGIN_PATH=$(pwd)
+openssl_version="1.1.1o"
 
 # cancel centos alias
 [[ -f /etc/redhat-release ]] && unalias -a
 
 #######color code########
-RED="31m"
-GREEN="32m"
-YELLOW="33m"
-BLUE="36m"
-FUCHSIA="35m"
+red="31m"
+green="32m"
+yellow="33m"
+blue="36m"
+fuchsia="35m"
 
-colorEcho(){
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+color_echo(){
+    echo -e "\033[$1${@:2}\033[0m"
 }
 
 #######get params#########
@@ -34,40 +25,40 @@ while [[ $# > 0 ]];do
     KEY="$1"
     case $KEY in
         --nopip)
-        NO_PIP=1
-        colorEcho $BLUE "only install python3..\n"
+        no_pip=1
+        color_echo $blue "only install python3..\n"
         ;;
         --latest)
-        LATEST=1
+        latest=1
         ;;
         -v|--version)
-        INSTALL_VERSION="$2"
-        echo -e "prepare install python $(colorEcho ${BLUE} $INSTALL_VERSION)..\n"
+        install_version="$2"
+        echo -e "prepare install python $(color_echo ${blue} $install_version)..\n"
         shift
         ;;
         *)
-        CONFIG_PARAM=$CONFIG_PARAM" $KEY"
+        config_param=$config_param" $KEY"
         ;;
     esac
     shift # past argument or value
 done
-if [[ $LATEST == 1 || $INSTALL_VERSION ]];then
-    [[ $CONFIG_PARAM ]] && echo "python3 compile command: `colorEcho $BLUE ./configure $CONFIG_PARAM`"
+if [[ $latest == 1 || $install_version ]];then
+    [[ $config_param ]] && echo "python3 compile command: `color_echo $blue ./configure $config_param`"
 fi
 #############################
 
-checkSys() {
+check_sys() {
     # check root user
-    [ $(id -u) != "0" ] && { colorEcho ${RED} "Error: You must be root to run this script"; exit 1; }
+    [ $(id -u) != "0" ] && { color_echo ${red} "Error: You must be root to run this script"; exit 1; }
 
     if [[ `command -v apt-get` ]];then
-        PACKAGE_MANAGER='apt-get'
+        package_manager='apt-get'
     elif [[ `command -v dnf` ]];then
-        PACKAGE_MANAGER='dnf'
+        package_manager='dnf'
     elif [[ `command -v yum` ]];then
-        PACKAGE_MANAGER='yum'
+        package_manager='yum'
     else
-        colorEcho $RED "Not support OS!"
+        color_echo $red "Not support OS!"
         exit 1
     fi
 
@@ -75,50 +66,50 @@ checkSys() {
     [[ -z `echo $PATH|grep /usr/local/bin` ]] && { echo 'export PATH=$PATH:/usr/local/bin' >> /etc/bashrc; source /etc/bashrc; }
 }
 
-commonDependent(){
-    [[ $PACKAGE_MANAGER == 'apt-get' ]] && ${PACKAGE_MANAGER} update -y
-    ${PACKAGE_MANAGER} install wget -y
+common_dependent(){
+    [[ $package_manager == 'apt-get' ]] && ${package_manager} update -y
+    ${package_manager} install wget -y
 }
 
-compileDependent(){
-    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
-        ${PACKAGE_MANAGER} groupinstall -y "Development tools"
-        ${PACKAGE_MANAGER} install -y tk-devel xz-devel gdbm-devel sqlite-devel bzip2-devel readline-devel zlib-devel openssl-devel libffi-devel
+compile_dependent(){
+    if [[ ${package_manager} == 'yum' || ${package_manager} == 'dnf' ]];then
+        ${package_manager} groupinstall -y "Development tools"
+        ${package_manager} install -y tk-devel xz-devel gdbm-devel sqlite-devel bzip2-devel readline-devel zlib-devel openssl-devel libffi-devel
     else
-        ${PACKAGE_MANAGER} install -y build-essential
-        ${PACKAGE_MANAGER} install -y uuid-dev tk-dev liblzma-dev libgdbm-dev libsqlite3-dev libbz2-dev libreadline-dev zlib1g-dev libncursesw5-dev libssl-dev libffi-dev
+        ${package_manager} install -y build-essential
+        ${package_manager} install -y uuid-dev tk-dev liblzma-dev libgdbm-dev libsqlite3-dev libbz2-dev libreadline-dev zlib1g-dev libncursesw5-dev libssl-dev libffi-dev
     fi
 }
 
-downloadPackage(){
-    cd $ORIGIN_PATH
-    [[ $LATEST == 1 ]] && INSTALL_VERSION=`curl -s https://www.python.org/|grep "downloads/release/"|egrep -o "Python [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]"|sed s/"Python "//g`
-    PYTHON_PACKAGE="Python-$INSTALL_VERSION.tgz"
+download_package(){
+    cd $origin_path
+    [[ $latest == 1 ]] && install_version=`curl -s https://www.python.org/|grep "downloads/release/"|egrep -o "Python [[:digit:]]+\.[[:digit:]]+\.[[:digit:]]"|sed s/"Python "//g`
+    python_package="Python-$install_version.tgz"
     while :
     do
-        if [[ ! -e $PYTHON_PACKAGE ]];then
-            wget https://www.python.org/ftp/python/$INSTALL_VERSION/$PYTHON_PACKAGE
+        if [[ ! -e $python_package ]];then
+            wget https://www.python.org/ftp/python/$install_version/$python_package
             if [[ $? != 0 ]];then
-                colorEcho ${RED} "Fail download $PYTHON_PACKAGE version python!"
+                color_echo ${red} "Fail download $python_package version python!"
                 exit 1
             fi
         fi
-        tar xzvf $PYTHON_PACKAGE
+        tar xzvf $python_package
         if [[ $? == 0 ]];then
             break
         else
-            rm -rf $PYTHON_PACKAGE Python-$INSTALL_VERSION
+            rm -rf $python_package Python-$install_version
         fi
     done
-    cd Python-$INSTALL_VERSION
+    cd Python-$install_version
 }
 
-updateOpenSSL(){
-    cd $ORIGIN_PATH
-    local VERSION=$1
-    wget --no-check-certificate https://www.openssl.org/source/openssl-$VERSION.tar.gz
-    tar xzvf openssl-$VERSION.tar.gz
-    cd openssl-$VERSION
+update_openssl(){
+    cd $origin_path
+    local version=$1
+    wget --no-check-certificate https://www.openssl.org/source/openssl-$version.tar.gz
+    tar xzvf openssl-$version.tar.gz
+    cd openssl-$version
     ./config --prefix=/usr/local/openssl shared zlib
     make && make install
     mv -f /usr/bin/openssl /usr/bin/openssl.old
@@ -128,62 +119,62 @@ updateOpenSSL(){
     echo "/usr/local/openssl/lib">>/etc/ld.so.conf
     ldconfig
 
-    cd $ORIGIN_PATH && rm -rf openssl-$VERSION*
+    cd $origin_path && rm -rf openssl-$version*
 }
 
 # compile install python3
 compileInstall(){
-    compileDependent
+    compile_dependent
 
-    LOCAL_SSL_VERSION=$(openssl version|awk '{print $2}'|tr -cd '[0-9]')
+    local local_ssl_version=$(openssl version|awk '{print $2}'|tr -cd '[0-9]')
 
-    if [[ $LOCAL_SSL_VERSION -le 101 ]] || ([[ $LATEST == 1 ]] && [[ $LOCAL_SSL_VERSION -lt 111 ]]);then
-        updateOpenSSL $OPENSSL_VERSION
+    if [[ $local_ssl_version -le 101 ]] || ([[ $latest == 1 ]] && [[ $local_ssl_version -lt 111 ]]);then
+        update_openssl $openssl_version
         echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/openssl/lib" >> $HOME/.bashrc
         source $HOME/.bashrc
-        downloadPackage
-        ./configure --with-openssl=/usr/local/openssl $CONFIG_PARAM
+        download_package
+        ./configure --with-openssl=/usr/local/openssl $config_param
         make && make install
     else
-        downloadPackage
-        ./configure $CONFIG_PARAM
+        download_package
+        ./configure $config_param
         make && make install
     fi
 
-    cd $ORIGIN_PATH && rm -rf Python-$INSTALL_VERSION*
+    cd $origin_path && rm -rf Python-$install_version*
 }
 
 #online install python3
-webInstall(){
-    if [[ ${PACKAGE_MANAGER} == 'yum' || ${PACKAGE_MANAGER} == 'dnf' ]];then
+web_install(){
+    if [[ ${package_manager} == 'yum' || ${package_manager} == 'dnf' ]];then
         if ! type python3 >/dev/null 2>&1;then
-            if [[ ${PACKAGE_MANAGER} == 'yum' ]];then
-                ${PACKAGE_MANAGER} install epel-release -y
-                ${PACKAGE_MANAGER} install https://repo.ius.io/ius-release-el7.rpm -y
-                ${PACKAGE_MANAGER} install python36u -y
+            if [[ ${package_manager} == 'yum' ]];then
+                ${package_manager} install epel-release -y
+                ${package_manager} install https://repo.ius.io/ius-release-el7.rpm -y
+                ${package_manager} install python36u -y
                 [[ ! -e /bin/python3 ]] && ln -s /bin/python3.6 /bin/python3
-            elif [[ ${PACKAGE_MANAGER} == 'dnf' ]];then
-                ${PACKAGE_MANAGER} install python3 -y
+            elif [[ ${package_manager} == 'dnf' ]];then
+                ${package_manager} install python3 -y
             fi
         fi
     else
         if ! type python3 >/dev/null 2>&1;then
-            ${PACKAGE_MANAGER} install python3 -y
+            ${package_manager} install python3 -y
         fi
-        ${PACKAGE_MANAGER} install python3-distutils -y >/dev/null 2>&1
+        ${package_manager} install python3-distutils -y >/dev/null 2>&1
     fi
 }
 
-pipInstall(){
-    [[ $NO_PIP == 1 ]] && return
-    PY3_VERSION=`python3 -V|tr -cd '[0-9.]'|cut -d. -f2`
-    if [[ $PY3_VERSION > 6 ]];then
+pip_install(){
+    [[ $no_pip == 1 ]] && return
+    py3_version=`python3 -V|tr -cd '[0-9.]'|cut -d. -f2`
+    if [[ $py3_version > 6 ]];then
         python3 <(curl -sL https://bootstrap.pypa.io/get-pip.py)
-    elif [[ $PY3_VERSION == 6 ]];then
+    elif [[ $py3_version == 6 ]];then
         python3 <(curl -sL https://bootstrap.pypa.io/pip/3.6/get-pip.py)
     else
         if [[ -z `command -v pip` ]];then
-            if [[ ${PACKAGE_MANAGER} == 'apt-get' ]];then
+            if [[ ${package_manager} == 'apt-get' ]];then
                 apt-get install -y python3-pip
             fi
             [[ -z `command -v pip` && `command -v pip3` ]] && ln -s $(which pip3) /usr/bin/pip
@@ -192,17 +183,17 @@ pipInstall(){
 }
 
 main(){
-    checkSys
+    check_sys
 
-    commonDependent
+    common_dependent
     
-    if [[ $LATEST == 1 || $INSTALL_VERSION ]];then
+    if [[ $latest == 1 || $install_version ]];then
         compileInstall
     else
-        webInstall
+        web_install
     fi
 
-    pipInstall
+    pip_install
 }
 
 main
